@@ -8,8 +8,10 @@ on:
         required: true
         type: choice
         options:
+          - 'bilibili'
           - '4399'
           - 'MI'
+        
 
 
 
@@ -39,10 +41,7 @@ jobs:
         with:
           repository: "n0k0m3/Perseus"
           path: "Perseus"
-          ref: "src"
-      
-      - name: Install xmllint
-        run: sudo apt-get update && sudo apt-get install -y libxml2-utils
+          ref: "src"      
         
       - name: run Perseus build
         run: |
@@ -54,6 +53,9 @@ jobs:
         id: bundle_id
         run: |
           case "${{ github.event.inputs.region }}" in
+          "bilibili")
+            echo "BUNDLE_ID=com.bilibili.AzurLane" >> $GITHUB_ENV
+            ;;
           "4399")
             echo "BUNDLE_ID=com.bilibili.blhx.m4399" >> $GITHUB_ENV
             ;;
@@ -73,7 +75,7 @@ jobs:
       - name: Release
         uses: ncipollo/release-action@v1
         with:
-          tag: "${{ github.event.inputs.region }}"
+          tag: "${{ github.event.inputs.region }} Ver."
           name: "Perseus Release ${{ github.event.inputs.region }} Ver."
           artifacts: "build/*.apk"
           allowUpdates: true
