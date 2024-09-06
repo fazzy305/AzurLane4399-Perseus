@@ -2,10 +2,22 @@ name: Perseus Build
 
 on:
   workflow_dispatch:
+    inputs:
+      region:
+        description: 'Select Region'
+        required: true
+        type: choice
+        options:
+          - '4399'
+          - 'MI'
+
+
 
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - uses: actions/checkout@v3
@@ -16,17 +28,52 @@ jobs:
           java-version: "17"
           distribution: "adopt"
 
+      - name: Setup Android NDK
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r26b
+
+      # libPerseus build process
+      - name: checkout Perseus
+        uses: actions/checkout@v3
+        with:
+          repository: "n0k0m3/Perseus"
+          path: "Perseus"
+          ref: "src"
+      
+      - name: Install xmllint
+        run: sudo apt-get update && sudo apt-get install -y libxml2-utils
+        
+      - name: run Perseus build
+        run: |
+          cd Perseus
+          ./build.sh
+
+      # APK build process
+      - name: Determine Bundle ID
+        id: bundle_id
+        run: |
+          case "${{ github.event.inputs.region }}" in
+          "4399")
+            echo "BUNDLE_ID=com.bilibili.blhx.m4399" >> $GITHUB_ENV
+            ;;
+          "MI")
+            echo "BUNDLE_ID=com.bilibili.blhx.mi" >> $GITHUB_ENV
+            ;;
+          esac
+        shell: bash
+
       - name: Build Perseus APK
-        run: ./patch_perseus.sh
+        run: ./patch_perseus.sh ${{ env.BUNDLE_ID }}
 
       - name: Zipalign and Sign Android release
         run: ./zipalign_sign.sh
                     
-      - uses: marvinpinto/action-automatic-releases@latest
+      # Publish APK
+      - name: Release
+        uses: ncipollo/release-action@v1
         with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
-          draft: true
-          title: "Perseus Release v${{ env.PERSEUS_VERSION }}"
-          files: |
-            build/*.apk
+          tag: "${{ github.event.inputs.region }}-v${{ env.PERSEUS_VERSION }}"
+          name: "Perseus Release ${{ github.event.inputs.region }} "
+          artifacts: "build/*.apk"
+          allowUpdates: true
