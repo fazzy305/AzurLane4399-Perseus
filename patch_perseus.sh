@@ -73,6 +73,6 @@ else
     oncreate=$(grep -n -m 1 'onCreate' ${bundle_id}/smali/com/unity3d/player/UnityPlayerActivity.smali | sed  's/[0-9]*\:\(.*\)/\1/')
     sed -ir "s#\($oncreate\)#.method private static native init(Landroid/content/Context;)V\n.end method\n\n\1#" ${bundle_id}/smali/com/unity3d/player/UnityPlayerActivity.smali
     sed -ir "s#\($oncreate\)#\1\n    const-string v0, \"Perseus\"\n\n\    invoke-static {v0}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V\n\n    invoke-static {p0}, Lcom/unity3d/player/UnityPlayerActivity;->init(Landroid/content/Context;)V\n#" ${bundle_id}/smali/com/unity3d/player/UnityPlayerActivity.smali
-
+fi
 echo "Build Patched Azur Lane apk"
 java -jar apktool.jar -q -f b ${bundle_id} -o build/${bundle_id}.patched.apk
