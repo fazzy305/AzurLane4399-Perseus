@@ -38,21 +38,22 @@ chmod +x apkeep
 if [ ! -f "${bundle_id}.apk" ]; then
     echo "Get Azur Lane apk"
     
-    if [ "${bundle_id}" == "com.bilibili.AzurLane" ]; then
-        # eg: wget "your download link" -O "your packge name.apk" -q
-        #if you want to patch .xapk, change the suffix here to wget "your download link" -O "your packge name.xapk" -q
-        wget https://pkg.biligame.com/games/blhx_8.2.1_0820_1_20240830_041443_51682.apk -O ${bundle_id}.apk -q
-    fi
-    
-    if [ "${bundle_id}" == "com.bilibili.blhx.m4399" ]; then
-        wget https://ty.ly93.cc/1197/124191154186832952/com.bilibili.blhx.m4399.apk -O ${bundle_id}.apk -q
-    fi
-    
-    if [ "${bundle_id}" == "com.bilibili.blhx.mi" ]; then
-        wget https://c2.g.mi.com/package/AppStore/05e20856eb7314270b3351b3f8fcbec1cc685c319/eyJhcGt2Ijo4MjEwLCJuYW1lIjoiY29tLmJpbGliaWxpLmJsaHgubWkiLCJ2ZXJzaW9uIjoiMS4wIiwiY2lkIjoibWVuZ18xNDM5XzM1Ml9hbmRyb2lkIiwibWQ1Ijp0cnVlfQ/ae0d1d2fe57f558acbd01db2b950b68c -O ${bundle_id}.apk -q
-    fi
+    case "${bundle_id}" in
+        "com.bilibili.AzurLane")
+            wget https://pkg.biligame.com/games/blhx_8.2.1_0820_1_20240830_041443_51682.apk -O ${bundle_id}.apk -q
+            ;;
+        "com.bilibili.blhx.m4399")
+            wget https://ty.ly93.cc/1197/124191154186832952/com.bilibili.blhx.m4399.apk -O ${bundle_id}.apk -q
+            ;;
+        "com.bilibili.blhx.mi")
+            wget https://c2.g.mi.com/package/AppStore/05e20856eb7314270b3351b3f8fcbec1cc685c319/eyJhcGt2Ijo4MjEwLCJuYW1lIjoiY29tLmJpbGliaWxpLmJsaHgubWkiLCJ2ZXJzaW9uIjoiMS4wIiwiY2lkIjoibWVuZ18xNDM5XzM1Ml9hbmRyb2lkIiwibWQ1Ijp0cnVlfQ/ae0d1d2fe57f558acbd01db2b950b68c -O ${bundle_id}.apk -q
+            ;;
+        *)
+            echo "Unknown bundle ID: ${bundle_id}"
+            ;;
+    esac
 
-    echo "apk downloaded !"   
+    echo "${bundle_id}.apk downloaded !"   
     # if you can only download .xapk file uncomment 2 lines below. (delete the '#')
     #unzip -o com.YoStarJP.AzurLane.xapk -d AzurLane
     #cp AzurLane/com.YoStarJP.AzurLane.apk .
