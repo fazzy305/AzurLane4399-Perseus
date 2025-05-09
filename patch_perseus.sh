@@ -43,7 +43,7 @@ if [ ! -f "${bundle_id}.apk" ]; then
             wget https://pkg.biligame.com/games/blhx_8.2.1_0820_1_20240830_041443_51682.apk -O ${bundle_id}.apk -q
             ;;
         "com.bilibili.blhx.m4399")
-            wget https://ty.ly93.cc/1197/325091193480790562/blhx.apk -O ${bundle_id}.apk -q
+            wget https://media-gdgz-fy-person01.gd5oss.ctyunxs.cn/PERSONCLOUD/471b024b-e17e-45b4-8bd7-96a7cd3f910e.apk?x-amz-CLIENTTYPEIN=UNKNOWN&AWSAccessKeyId=g6jU1T3TkAbPKf5ouH5d&x-amz-userLevel=0&x-amz-limitrate=51200&response-content-type=application/vnd.android.package-archive&x-amz-UID=553919950&x-amz-APPID=828221&response-content-disposition=attachment%3Bfilename%3D%22blhx.apk%22%3Bfilename*%3DUTF-8%27%27blhx.apk&x-amz-CLIENTNETWORK=UNKNOWN&x-amz-CLOUDTYPEIN=PERSON&Signature=G8LACIPsUzbM9IKPU/fZJvwsidM%3D&Expires=1746813203&x-amz-FSIZE=1363303252&x-amz-UFID=325091193480790562 -O ${bundle_id}.apk -q
             ;;
         "com.bilibili.blhx.mi")
             wget https://c2.g.mi.com/package/AppStore/05e20856eb7314270b3351b3f8fcbec1cc685c319/eyJhcGt2Ijo4MjEwLCJuYW1lIjoiY29tLmJpbGliaWxpLmJsaHgubWkiLCJ2ZXJzaW9uIjoiMS4wIiwiY2lkIjoibWVuZ18xNDM5XzM1Ml9hbmRyb2lkIiwibWQ1Ijp0cnVlfQ/ae0d1d2fe57f558acbd01db2b950b68c -O ${bundle_id}.apk -q
