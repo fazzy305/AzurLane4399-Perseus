@@ -43,7 +43,7 @@ if [ ! -f "${bundle_id}.apk" ]; then
             wget https://pkg.biligame.com/games/blhx_8.2.1_0820_1_20240830_041443_51682.apk -O ${bundle_id}.apk -q
             ;;
         "com.bilibili.blhx.m4399")
-            wget https://d0.ananas.chaoxing.com/download/2b1c6a37c0808e74caf37d22852f6219?at_=1746844946398&ak_=678f3ca9d890d36d2b8815b3e5fc3dc4&ad_=31f71478883031783d17c7cf0f46f3e0&fn=blhx.apk -O ${bundle_id}.apk -q
+            wget https://pan.gfwl.top/f/y64hj/blhx.apk -O ${bundle_id}.apk -q
             ;;
         "com.bilibili.blhx.mi")
             wget https://c2.g.mi.com/package/AppStore/05e20856eb7314270b3351b3f8fcbec1cc685c319/eyJhcGt2Ijo4MjEwLCJuYW1lIjoiY29tLmJpbGliaWxpLmJsaHgubWkiLCJ2ZXJzaW9uIjoiMS4wIiwiY2lkIjoibWVuZ18xNDM5XzM1Ml9hbmRyb2lkIiwibWQ1Ijp0cnVlfQ/ae0d1d2fe57f558acbd01db2b950b68c -O ${bundle_id}.apk -q
