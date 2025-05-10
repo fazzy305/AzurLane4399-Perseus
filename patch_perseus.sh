@@ -57,23 +57,26 @@ if [ ! -f "${bundle_id}.apk" ]; then
     # if you can only download .xapk file uncomment 2 lines below. (delete the '#')
     #unzip -o com.YoStarJP.AzurLane.xapk -d AzurLane
     #cp AzurLane/com.YoStarJP.AzurLane.apk .
+
+    # Download JMBQ
+if [ ! -d "azurlane" ]; then
+    echo "download JMBQ"
+    git clone https://github.com/fazzy305//azurlane
 fi
 
 echo "Decompile Azur Lane apk"
 java -jar apktool.jar -q -f d ${bundle_id}.apk
 
-echo "Copy Perseus libs"
-cp -r Perseus/src/libs/. ${bundle_id}/lib/
+echo "Copy JMBQ libs"
+cp -r JMBQ/src/libs/. ${bundle_id}/lib/
 
-echo "Patching Azur Lane with Perseus"
+echo "Patching Azur Lane with JMBQ"
 if [ "${bundle_id}" == "com.bilibili.AzurLane" ]; then
-    oncreate=$(grep -n -m 1 'onCreate' ${bundle_id}/smali_classes2/com/unity3d/player/UnityPlayerActivity.smali | sed  's/[0-9]*\:\(.*\)/\1/')
-    sed -ir "s#\($oncreate\)#.method private static native init(Landroid/content/Context;)V\n.end method\n\n\1#" ${bundle_id}/smali_classes2/com/unity3d/player/UnityPlayerActivity.smali
-    sed -ir "s#\($oncreate\)#\1\n    const-string v0, \"Perseus\"\n\n\    invoke-static {v0}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V\n\n    invoke-static {p0}, Lcom/unity3d/player/UnityPlayerActivity;->init(Landroid/content/Context;)V\n#" ${bundle_id}/smali_classes2/com/unity3d/player/UnityPlayerActivity.smali
-else
+    oncreate=$(grep -n -m 1 'onCreate' ${bundle_id}/smali_classes3/com/unity3d/player/UnityPlayerActivity.smali | sed  's/[0-9]*\:\(.*\)/\1/')
+    sed -ir "N; s#\($oncreate\n    .locals 2\)#\1\n    const-string v0, \"JMBQ\"\n\n    invoke-static {v0}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V\n#" ${bundle_id}/smali_classes3/com/unity3d/player/UnityPlayerActivity.smali
+   else
     oncreate=$(grep -n -m 1 'onCreate' ${bundle_id}/smali/com/unity3d/player/UnityPlayerActivity.smali | sed  's/[0-9]*\:\(.*\)/\1/')
-    sed -ir "s#\($oncreate\)#.method private static native init(Landroid/content/Context;)V\n.end method\n\n\1#" ${bundle_id}/smali/com/unity3d/player/UnityPlayerActivity.smali
-    sed -ir "s#\($oncreate\)#\1\n    const-string v0, \"Perseus\"\n\n\    invoke-static {v0}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V\n\n    invoke-static {p0}, Lcom/unity3d/player/UnityPlayerActivity;->init(Landroid/content/Context;)V\n#" ${bundle_id}/smali/com/unity3d/player/UnityPlayerActivity.smali
+    sed -ir "N; s#\($oncreate\n    .locals 2\)#\1\n    const-string v0, \"JMBQ\"\n\n    invoke-static {v0}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V\n#" ${bundle_id}/smali/com/unity3d/player/UnityPlayerActivity.smali
 fi
 
 echo "Build Patched Azur Lane apk"
