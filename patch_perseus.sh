@@ -83,7 +83,7 @@ echo "Decompile Azur Lane apk"
 java -jar apktool.jar -q -f d ${bundle_id}.apk
 
 echo "Copy JMBQ libs"
-cp -r JMBQ/src/libs/. ${bundle_id}/lib/
+cp -r azurlane/.  ${bundle_id}/lib/
 
 echo "Patching Azur Lane with JMBQ"
 if [ "${bundle_id}" == "com.bilibili.AzurLane" ]; then
