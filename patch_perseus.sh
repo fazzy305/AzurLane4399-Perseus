@@ -38,25 +38,40 @@ chmod +x apkeep
 if [ ! -f "${bundle_id}.apk" ]; then
     echo "Get Azur Lane apk"
     
+    download_success=false
+    
     case "${bundle_id}" in
         "com.bilibili.AzurLane")
-            wget https://pkg.biligame.com/games/blhx_8.2.1_0820_1_20240830_041443_51682.apk -O ${bundle_id}.apk -q
+            if wget "https://pkg.biligame.com/games/blhx_8.2.1_0820_1_20240830_041443_51682.apk" -O "${bundle_id}.apk" -q; then
+                download_success=true
+            fi
             ;;
         "com.bilibili.blhx.m4399")
-            wget https://pan.gfwl.top/f/y64hj/blhx.apk -O ${bundle_id}.apk -q
+            if wget "https://pan.gfwl.top/f/y64hj/blhx.apk" -O "${bundle_id}.apk" -q; then
+                download_success=true
+            fi
             ;;
         "com.bilibili.blhx.mi")
-            wget https://c2.g.mi.com/package/AppStore/05e20856eb7314270b3351b3f8fcbec1cc685c319/eyJhcGt2Ijo4MjEwLCJuYW1lIjoiY29tLmJpbGliaWxpLmJsaHgubWkiLCJ2ZXJzaW9uIjoiMS4wIiwiY2lkIjoibWVuZ18xNDM5XzM1Ml9hbmRyb2lkIiwibWQ1Ijp0cnVlfQ/ae0d1d2fe57f558acbd01db2b950b68c -O ${bundle_id}.apk -q
+            if wget "https://c2.g.mi.com/package/AppStore/05e20856eb7314270b3351b3f8fcbec1cc685c319/eyJhcGt2Ijo4MjEwLCJuYW1lIjoiY29tLmJpbGliaWxpLmJsaHgubWkiLCJ2ZXJzaW9uIjoiMS4wIiwiY2lkIjoibWVuZ18xNDM5XzM1Ml9hbmRyb2lkIiwibWQ1Ijp0cnVlfQ/ae0d1d2fe57f558acbd01db2b950b68c" -O "${bundle_id}.apk" -q; then
+                download_success=true
+            fi
             ;;
         *)
             echo "Unknown bundle ID: ${bundle_id}"
+            exit 1
             ;;
     esac
 
-    echo "${bundle_id}.apk downloaded !"   
+    if [ "$download_success" = true ]; then
+        echo "${bundle_id}.apk downloaded !"
+    else
+        echo "Failed to download ${bundle_id}.apk"
+        exit 1
+    fi
     # if you can only download .xapk file uncomment 2 lines below. (delete the '#')
     #unzip -o com.YoStarJP.AzurLane.xapk -d AzurLane
     #cp AzurLane/com.YoStarJP.AzurLane.apk .
+fi
 
     # Download JMBQ
 if [ ! -d "azurlane" ]; then
