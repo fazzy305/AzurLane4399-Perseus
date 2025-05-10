@@ -52,7 +52,7 @@ if [ ! -f "${bundle_id}.apk" ]; then
             fi
             ;;
         "com.bilibili.blhx.mi")
-            if wget "https://c2.g.mi.com/package/AppStore/05e20856eb7314270b3351b3f8fcbec1cc685c319/eyJhcGt2Ijo4MjEwLCJuYW1lIjoiY29tLmJpbGliaWxpLmJsaHgubWkiLCJ2ZXJzaW9uIjoiMS4wIiwiY2lkIjoibWVuZ18xNDM5XzM1Ml9hbmRyb2lkIiwibWQ1Ijp0cnVlfQ/ae0d1d2fe57f558acbd01db2b950b68c" -O "${bundle_id}.apk" -q; then
+            if wget "https://s2.g.mi.com/ed47af393a8d535d8c59de660c54c389/1747460096/package/AppStore/024db3d6bc5c74227838ab997e88123d30ebec9d1/eyJhcGt2Ijo5NTEwLCJuYW1lIjoiY29tLmJpbGliaWxpLmJsaHgubWkiLCJ2ZXJzaW9uIjoiMS4wIiwiY2lkIjoibWVuZ18xNDM5XzM0NV9hbmRyb2lkIiwibWQ1IjpmYWxzZX0/9a79b483552727b4f2bf0000c6084fc6" -O "${bundle_id}.apk" -q; then
                 download_success=true
             fi
             ;;
