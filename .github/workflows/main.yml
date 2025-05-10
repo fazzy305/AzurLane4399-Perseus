@@ -34,6 +34,13 @@ jobs:
         uses: nttld/setup-ndk@v1
         with:
           ndk-version: r26b
+          
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        
+      - name: Install build-tools
+        run: |
+          yes | sdkmanager --install "build-tools;32.0.0"
 
       # libPerseus build process
       - name: checkout Perseus
