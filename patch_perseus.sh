@@ -80,35 +80,49 @@ fi
 mkdir -p "${bundle_id}"
 
 echo "Decompile Azur Lane apk"
-java -jar apktool.jar -f d -o "${bundle_id}" "${bundle_id}.apk"
+# 修复点1: 使用完整参数名称而不是短参数
+java -jar apktool.jar decode --force --output "${bundle_id}" "${bundle_id}.apk"
+
+# 检查反编译是否成功
+if [ $? -ne 0 ]; then
+    echo "Error: Decompilation failed"
+    exit 1
+fi
 
 echo "Copy JMBQ libs"
-# 只复制必要的文件，排除 .git 目录
+# 修复点2: 只复制必要的文件，排除 .git 目录
 # 先检查 azurlane 目录中是否有 lib 子目录
 if [ -d "azurlane/lib" ]; then
     mkdir -p "${bundle_id}/lib/"
     # 使用 find 和 cp 结合，排除 .git 目录
-    find azurlane/lib -type f -name "*.so" -exec cp {} "${bundle_id}/lib/" \;
+    find azurlane/lib -type f -name "*.so" -exec cp -v {} "${bundle_id}/lib/" \;
 else
     # 如果没有 lib 子目录，直接复制所有 .so 文件
     mkdir -p "${bundle_id}/lib/"
-    find azurlane -name "*.so" -exec cp {} "${bundle_id}/lib/" \;
+    find azurlane -name "*.so" -exec cp -v {} "${bundle_id}/lib/" \;
 fi
 
 echo "Patching Azur Lane with JMBQ"
-# 查找 UnityPlayerActivity.smali 文件
-# 确定 smali 文件的位置
+# 修复点3: 查找 UnityPlayerActivity.smali 文件
+# 首先确定 smali 文件的位置
 smali_path=""
 if [ -f "${bundle_id}/smali_classes3/com/unity3d/player/UnityPlayerActivity.smali" ]; then
     smali_path="${bundle_id}/smali_classes3/com/unity3d/player/UnityPlayerActivity.smali"
+    echo "Found UnityPlayerActivity.smali in smali_classes3"
 elif [ -f "${bundle_id}/smali/com/unity3d/player/UnityPlayerActivity.smali" ]; then
     smali_path="${bundle_id}/smali/com/unity3d/player/UnityPlayerActivity.smali"
+    echo "Found UnityPlayerActivity.smali in smali"
 else
     # 如果标准位置找不到，尝试搜索整个目录
+    echo "Searching for UnityPlayerActivity.smali in all directories..."
     smali_path=$(find "${bundle_id}" -name "UnityPlayerActivity.smali" | head -n 1)
     if [ -z "$smali_path" ]; then
         echo "Error: Could not find UnityPlayerActivity.smali"
+        echo "Available smali files:"
+        find "${bundle_id}" -name "*.smali" | head -10
         exit 1
+    else
+        echo "Found UnityPlayerActivity.smali at: $smali_path"
     fi
 fi
 
@@ -119,6 +133,9 @@ if [ -z "$oncreate" ]; then
     exit 1
 fi
 
+# 备份原始文件
+cp "$smali_path" "${smali_path}.bak"
+
 # 应用补丁
 sed -i "N; s#\($oncreate\n    .locals 2\)#\1\n    const-string v0, \"JMBQ\"\n\n    invoke-static {v0}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V\n#" "$smali_path"
 
@@ -126,6 +143,12 @@ sed -i "N; s#\($oncreate\n    .locals 2\)#\1\n    const-string v0, \"JMBQ\"\n\n 
 mkdir -p build
 
 echo "Build Patched Azur Lane apk"
-java -jar apktool.jar -f b "${bundle_id}" -o "build/${bundle_id}.patched.apk"
+# 修复点4: 使用完整参数名称而不是短参数
+java -jar apktool.jar build --force "${bundle_id}" --output "build/${bundle_id}.patched.apk"
 
-echo "Done! Patched APK is at build/${bundle_id}.patched.apk"
+if [ $? -eq 0 ]; then
+    echo "Done! Patched APK is at build/${bundle_id}.patched.apk"
+else
+    echo "Error: Building patched APK failed"
+    exit 1
+fi
