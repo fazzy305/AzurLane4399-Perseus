@@ -47,7 +47,7 @@ if [ ! -f "${bundle_id}.apk" ]; then
             fi
             ;;
         "com.bilibili.blhx.m4399")
-            if wget "https://pan.gfwl.top/f/y64hj/blhx.apk" -O "${bundle_id}.apk" -q; then
+            if wget "https://pan.gfwl.top/f/AaX5Fr/blhx.apk" -O "${bundle_id}.apk" -q; then
                 download_success=true
             fi
             ;;
