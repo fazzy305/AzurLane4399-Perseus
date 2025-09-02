@@ -14,7 +14,7 @@ bundle_id=$1
 get_artifact_download_url () {
     # Usage: get_download_url <repo_name> <artifact_name> <file_type>
     local api_url="https://api.github.com/repos/$1/releases/latest"
-    local result=$(curl $api_url | jq ".assets[] | select(.name | contains(\"$2\") and contains(\"$3\") and (contains(\".sig\") | not)) | .browser_download_url")
+    local result=$(curl -s $api_url | jq ".assets[] | select(.name | contains(\"$2\") and contains(\"$3\") and (contains(\".sig\") | not)) | .browser_download_url")
     echo ${result:1:-1}
 }
 
@@ -52,7 +52,7 @@ if [ ! -f "${bundle_id}.apk" ]; then
             fi
             ;;
         "com.bilibili.blhx.mi")
-            if wget "https://s2.g.mi.com/ed47af393a8d535d8c59de660c54c389/1747460096/package/AppStore/024db3d6bc5c74227838ab997e88123d30ebec9d1/eyJhcGt2Ijo5NTEwLCJuYW1lIjoiY29tLmJpbGliaWxpLmJsaHgubWkiLCJ2ZXJzaW9uIjoiMS4wIiwiY2lkIjoibWVuZ18xNDM5XzM0NV9hbmRyb2lkIiwibWQ1IjpmYWxzZX0/9a79b483552727b4f2bf0000c6084fc6" -O "${bundle_id}.apk" -q; then
+            if wget "https://s2.g.mi.com/ed47af393a8d535d8c59de660c54c389/1747460096/package/AppStore/024db3d6bc5c74227838ab997e88123d30ebec9d1/eyJhcGt2Ijo5NTEwLCJuYW1lIjoiY29tLmJpbGliaWxpLmJsaHg.mi" -O "${bundle_id}.apk" -q; then
                 download_success=true
             fi
             ;;
@@ -68,32 +68,64 @@ if [ ! -f "${bundle_id}.apk" ]; then
         echo "Failed to download ${bundle_id}.apk"
         exit 1
     fi
-    # if you can only download .xapk file uncomment 2 lines below. (delete the '#')
-    #unzip -o com.YoStarJP.AzurLane.xapk -d AzurLane
-    #cp AzurLane/com.YoStarJP.AzurLane.apk .
 fi
 
-    # Download JMBQ
+# Download JMBQ
 if [ ! -d "azurlane" ]; then
     echo "download JMBQ"
-    git clone https://github.com/fazzy305//azurlane
+    git clone https://github.com/fazzy305/azurlane
 fi
+
+# 确保输出目录存在
+mkdir -p "${bundle_id}"
 
 echo "Decompile Azur Lane apk"
-# java -jar apktool.jar -q -f d -o "${bundle_id}" "${bundle_id}.apk"
-java -jar apktool.jar -f d ${bundle_id}.apk
+java -jar apktool.jar -f d -o "${bundle_id}" "${bundle_id}.apk"
 
 echo "Copy JMBQ libs"
-cp -r azurlane/.  ${bundle_id}/lib/
-
-echo "Patching Azur Lane with JMBQ"
-if [ "${bundle_id}" == "com.bilibili.AzurLane" ]; then
-    oncreate=$(grep -n -m 1 'onCreate' ${bundle_id}/smali_classes3/com/unity3d/player/UnityPlayerActivity.smali | sed  's/[0-9]*\:\(.*\)/\1/')
-    sed -ir "N; s#\($oncreate\n    .locals 2\)#\1\n    const-string v0, \"JMBQ\"\n\n    invoke-static {v0}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V\n#" ${bundle_id}/smali_classes3/com/unity3d/player/UnityPlayerActivity.smali
-   else
-    oncreate=$(grep -n -m 1 'onCreate' ${bundle_id}/smali/com/unity3d/player/UnityPlayerActivity.smali | sed  's/[0-9]*\:\(.*\)/\1/')
-    sed -ir "N; s#\($oncreate\n    .locals 2\)#\1\n    const-string v0, \"JMBQ\"\n\n    invoke-static {v0}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V\n#" ${bundle_id}/smali/com/unity3d/player/UnityPlayerActivity.smali
+# 只复制必要的文件，排除 .git 目录
+# 先检查 azurlane 目录中是否有 lib 子目录
+if [ -d "azurlane/lib" ]; then
+    mkdir -p "${bundle_id}/lib/"
+    # 使用 find 和 cp 结合，排除 .git 目录
+    find azurlane/lib -type f -name "*.so" -exec cp {} "${bundle_id}/lib/" \;
+else
+    # 如果没有 lib 子目录，直接复制所有 .so 文件
+    mkdir -p "${bundle_id}/lib/"
+    find azurlane -name "*.so" -exec cp {} "${bundle_id}/lib/" \;
 fi
 
+echo "Patching Azur Lane with JMBQ"
+# 查找 UnityPlayerActivity.smali 文件
+# 确定 smali 文件的位置
+smali_path=""
+if [ -f "${bundle_id}/smali_classes3/com/unity3d/player/UnityPlayerActivity.smali" ]; then
+    smali_path="${bundle_id}/smali_classes3/com/unity3d/player/UnityPlayerActivity.smali"
+elif [ -f "${bundle_id}/smali/com/unity3d/player/UnityPlayerActivity.smali" ]; then
+    smali_path="${bundle_id}/smali/com/unity3d/player/UnityPlayerActivity.smali"
+else
+    # 如果标准位置找不到，尝试搜索整个目录
+    smali_path=$(find "${bundle_id}" -name "UnityPlayerActivity.smali" | head -n 1)
+    if [ -z "$smali_path" ]; then
+        echo "Error: Could not find UnityPlayerActivity.smali"
+        exit 1
+    fi
+fi
+
+# 提取 onCreate 方法
+oncreate=$(grep -n -m 1 'onCreate' "$smali_path" | sed 's/[0-9]*\:\(.*\)/\1/')
+if [ -z "$oncreate" ]; then
+    echo "Error: Could not find onCreate method in $smali_path"
+    exit 1
+fi
+
+# 应用补丁
+sed -i "N; s#\($oncreate\n    .locals 2\)#\1\n    const-string v0, \"JMBQ\"\n\n    invoke-static {v0}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V\n#" "$smali_path"
+
+# 确保构建输出目录存在
+mkdir -p build
+
 echo "Build Patched Azur Lane apk"
-java -jar apktool.jar -q -f b ${bundle_id} -o build/${bundle_id}.patched.apk
+java -jar apktool.jar -f b "${bundle_id}" -o "build/${bundle_id}.patched.apk"
+
+echo "Done! Patched APK is at build/${bundle_id}.patched.apk"
