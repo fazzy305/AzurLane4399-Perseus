@@ -80,7 +80,8 @@ if [ ! -d "azurlane" ]; then
 fi
 
 echo "Decompile Azur Lane apk"
-java -jar apktool.jar -q -f d ${bundle_id}.apk
+java -jar apktool.jar -q -f d -o "${bundle_id}" "${bundle_id}.apk"
+# java -jar apktool.jar -q -f d ${bundle_id}.apk
 
 echo "Copy JMBQ libs"
 cp -r azurlane/.  ${bundle_id}/lib/
