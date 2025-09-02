@@ -79,20 +79,9 @@ if [ ! -d "azurlane" ]; then
     git clone https://github.com/fazzy305//azurlane
 fi
 
-# 修复点1: 确保输出目录存在
-mkdir -p "${bundle_id}"
-
 echo "Decompile Azur Lane apk"
-# 修复点2: 明确指定输出目录
-java -jar apktool.jar -q -f d -o "${bundle_id}" "${bundle_id}.apk"
-
-echo "Copy JMBQ libs"
-# 修复点3: 确保目标目录存在
-mkdir -p "${bundle_id}/lib/"
-cp -r azurlane/. "${bundle_id}/lib/"
-# echo "Decompile Azur Lane apk"
 # java -jar apktool.jar -q -f d -o "${bundle_id}" "${bundle_id}.apk"
-# java -jar apktool.jar -q -f d ${bundle_id}.apk
+java -jar apktool.jar -f d ${bundle_id}.apk
 
 echo "Copy JMBQ libs"
 cp -r azurlane/.  ${bundle_id}/lib/
