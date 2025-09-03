@@ -80,8 +80,8 @@ fi
 mkdir -p "${bundle_id}"
 
 echo "Decompile Azur Lane apk"
-# 修复点1: 使用完整参数名称而不是短参数
-java -jar apktool.jar decode --force --output "${bundle_id}" "${bundle_id}.apk"
+# 使用完整参数名称而不是短参数
+java -jar apktool.jar decode --force --output ${bundle_id}.apk
 
 # 检查反编译是否成功
 if [ $? -ne 0 ]; then
@@ -92,15 +92,10 @@ fi
 echo "Copy JMBQ libs"
 # 排除 .git 目录
 # 先检查 azurlane 目录中是否有 lib 子目录
-if [ -d "azurlane/lib" ]; then
-    mkdir -p "${bundle_id}/lib/"
-    # 使用 find 和 cp 结合，排除 .git 目录
-    find azurlane/lib -type f -name "*.so" -exec cp -v {} "${bundle_id}/lib/" \;
-else
-    # 如果没有 lib 子目录，直接复制所有 .so 文件
-    mkdir -p "${bundle_id}/lib/"
-    find azurlane -name "*.so" -exec cp -v {} "${bundle_id}/lib/" \;
-fi
+mkdir -p "${bundle_id}/lib/"
+# 使用 find 和 cp 结合，排除 .git 目录
+find azurlane/lib -type f -name "*.so" -exec cp -v {} "${bundle_id}/lib/" \;
+
 
 echo "Patching Azur Lane with JMBQ"
 # 查找 UnityPlayerActivity.smali 文件
