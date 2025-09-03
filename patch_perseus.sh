@@ -99,14 +99,28 @@ echo "Copy JMBQ libs"
 cp -r azurlane/.  ${bundle_id}/lib/
 
 echo "Patching Azur Lane with JMBQ"
-if [ "${bundle_id}" == "com.bilibili.AzurLane" ]; then
-    oncreate=$(grep -n -m 1 'onCreate' ${bundle_id}/smali_classes3/com/unity3d/player/UnityPlayerActivity.smali | sed  's/[0-9]*\:\(.*\)/\1/')
-    sed -i -r "N; s#\($oncreate\n    .locals 2\)#\1\n    const-string v0, \"JMBQ\"\n\n    invoke-static {v0}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V\n#" ${bundle_id}/smali_classes3/com/unity3d/player/UnityPlayerActivity.smali
-   else
-    oncreate=$(grep -n -m 1 'onCreate' ${bundle_id}/smali/com/unity3d/player/UnityPlayerActivity.smali | sed  's/[0-9]*\:\(.*\)/\1/')
-    sed -i -r "N; s#\($oncreate\n    .locals 2\)#\1\n    const-string v0, \"JMBQ\"\n\n    invoke-static {v0}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V\n#" ${bundle_id}/smali/com/unity3d/player/UnityPlayerActivity.smali
+# 尝试搜索整个目录
+echo "Searching for UnityPlayerActivity.smali in all directories..."
+smali_path=$(find "${bundle_id}" -name "UnityPlayerActivity.smali" | head -n 1)
+if [ -z "$smali_path" ]; then
+    echo "Error: Could not find UnityPlayerActivity.smali"
+    echo "Available smali files:"
+    find "${bundle_id}" -name "*.smali" | head -10
+    echo "Available directories:"
+    find "${bundle_id}" -type d | grep -E "(smali|unity)" | head -10
+    exit 1
+else
+    echo "Found UnityPlayerActivity.smali at: $smali_path"
 fi
 
+# 提取 onCreate 方法
+oncreate=$(grep -n -m 1 'onCreate' "$smali_path" | sed 's/[0-9]*\:\(.*\)/\1/')
+if [ -z "$oncreate" ]; then
+    echo "Error: Could not find onCreate method in $smali_path"
+    exit 1
+fi
+# 应用补丁
+sed -i "N; s#\($oncreate\n    .locals 2\)#\1\n    const-string v0, \"JMBQ\"\n\n    invoke-static {v0}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V\n#" "$smali_path"
 
 echo "Build Patched Azur Lane apk"
 java -jar apktool.jar build --force "${bundle_id}" --output "build/${bundle_id}.patched.apk"
