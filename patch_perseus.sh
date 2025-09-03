@@ -116,3 +116,4 @@ if [ $? -eq 0 ]; then
 else
     echo "Error: Building patched APK failed"
     exit 1
+fi
