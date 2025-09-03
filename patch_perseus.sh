@@ -82,7 +82,19 @@ fi
 
 echo "Decompile Azur Lane apk"
 java -jar apktool.jar --force decode --output "${bundle_id}" "${bundle_id}.apk"
--o "${bundle_id}" "${bundle_id}.apk"
+
+# 检查反编译是否成功
+if [ $? -ne 0 ]; then
+    echo "Error: Decompilation failed"
+    exit 1
+fi
+
+# 展示反编译后的目录结构
+echo "Decompiled directory structure:"
+echo "=================================="
+tree "${bundle_id}" -L 2 2>/dev/null || find "${bundle_id}" -maxdepth 2 -type d | sort
+echo "=================================="
+
 echo "Copy JMBQ libs"
 cp -r azurlane/.  ${bundle_id}/lib/
 
