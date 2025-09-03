@@ -107,8 +107,6 @@ if [ "${bundle_id}" == "com.bilibili.AzurLane" ]; then
     sed -ir "N; s#\($oncreate\n    .locals 2\)#\1\n    const-string v0, \"JMBQ\"\n\n    invoke-static {v0}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V\n#" ${bundle_id}/smali/com/unity3d/player/UnityPlayerActivity.smali
 fi
 
-# 确保构建输出目录存在
-mkdir -p build
 
 echo "Build Patched Azur Lane apk"
 java -jar apktool.jar build --force "${bundle_id}" --output "build/${bundle_id}.patched.apk"
