@@ -1,4 +1,5 @@
-# Perseus 构建
+# ~~Perseus 构建
+# JMBQ构建
 
 此仓库模板可让您通过 GitHub Actions 构建 Perseus。这将帮助那些不想在本地机器上设置构建环境的用户。
 
@@ -7,6 +8,7 @@
 - 本仓库设计用于两种场景：国服版本以及当 APKPure 没有最新版本时的其他地区版本。
 - 需要具备代码编辑能力
 - 我不常使用 GitHub，因此不会提供任何技术支持。
+- 本项目使用JMBQ替换了经常卡顿的Perseus
 
 ## 设置指南
 1. 使用此仓库作为模板创建新的**私有**仓库（[创建指南](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template)）
