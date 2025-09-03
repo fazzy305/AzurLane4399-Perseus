@@ -1,7 +1,7 @@
 # ~~Perseus 构建~~
 # JMBQ构建
 
-此仓库模板可让您通过 GitHub Actions 构建 Perseus。这将帮助那些不想在本地机器上设置构建环境的用户。
+此仓库模板可让您通过 GitHub Actions 构建 ~~Perseus~~ JMBQ。这将帮助那些不想在本地机器上设置构建环境的用户。
 
 ## 重要说明
 - **任何情况下**都不得将 APK 文件上传至此仓库，以避免 DMCA 版权投诉。
