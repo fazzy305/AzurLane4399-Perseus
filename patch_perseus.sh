@@ -43,7 +43,7 @@ if [ ! -f "${bundle_id}.apk" ]; then
 
     case "${bundle_id}" in
         "com.bilibili.AzurLane")
-            if wget "https://pan.gfwl.top/f/PeXs2/blhx_bilibili.apk" -O "${bundle_id}.apk" -q; then
+            if wget "https://pan.gfwl.top/f/n8qeCn/blhx_bilibili.apk" -O "${bundle_id}.apk" -q; then
                 download_success=true
             fi
             ;;
