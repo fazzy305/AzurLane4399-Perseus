@@ -90,10 +90,10 @@ if [ $? -ne 0 ]; then
 fi
 
 # 展示反编译后的目录结构
-echo "Decompiled directory structure:"
-echo "=================================="
-tree "${bundle_id}" -L 2 2>/dev/null || find "${bundle_id}" -maxdepth 2 -type d | sort
-echo "=================================="
+#echo "Decompiled directory structure:"
+#echo "=================================="
+#tree "${bundle_id}" -L 2 2>/dev/null || find "${bundle_id}" -maxdepth 2 -type d | sort
+#echo "=================================="
 
 echo "Copy JMBQ libs"
 cp -r azurlane/.  ${bundle_id}/lib/
