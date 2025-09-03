@@ -81,7 +81,7 @@ if [ ! -d "azurlane" ]; then
 fi
 
 echo "Decompile Azur Lane apk"
-java -jar apktool.jar --force decode --output "${bundle_id}" "${bundle_id}.apk"
+java -jar apktool.jar decode --force --output "${bundle_id}" "${bundle_id}.apk"
 
 # 检查反编译是否成功
 if [ $? -ne 0 ]; then
