@@ -81,8 +81,8 @@ if [ ! -d "azurlane" ]; then
 fi
 
 echo "Decompile Azur Lane apk"
-java -jar apktool.jar --force decode ${bundle_id}.apk
-
+java -jar apktool.jar --force decode --output "${bundle_id}" "${bundle_id}.apk"
+-o "${bundle_id}" "${bundle_id}.apk"
 echo "Copy JMBQ libs"
 cp -r azurlane/.  ${bundle_id}/lib/
 
