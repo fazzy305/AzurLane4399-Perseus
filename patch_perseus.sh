@@ -81,7 +81,7 @@ if [ ! -d "azurlane" ]; then
 fi
 
 echo "Decompile Azur Lane apk"
-java -jar apktool.jar --quiet --force decode ${bundle_id}.apk
+java -jar apktool.jar --force decode ${bundle_id}.apk
 
 echo "Copy JMBQ libs"
 cp -r azurlane/.  ${bundle_id}/lib/
@@ -96,4 +96,4 @@ if [ "${bundle_id}" == "com.bilibili.AzurLane" ]; then
 fi
 
 echo "Build Patched Azur Lane apk"
-java -jar apktool.jar --quiet --force build ${bundle_id} --output build/${bundle_id}.patched.apk
+java -jar apktool.jar --force build ${bundle_id} --output build/${bundle_id}.patched.apk
