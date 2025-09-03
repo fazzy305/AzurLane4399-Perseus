@@ -53,7 +53,8 @@ if [ ! -f "${bundle_id}.apk" ]; then
             fi
             ;;
         "com.bilibili.blhx.mi")
-            if wget "https://s2.g.mi.com/ed47af393a8d535d8c59de660c54c389/1747460096/package/AppStore/024db3d6bc5c74227838ab997e88123d30ebec9d1/eyJhcGt2Ijo5NTEwLCJuYW1lIjoiY29tLmJpbGliaWxpLmJsaHgubWkiLCJ2ZXJzaW9uIjoiMS4wIiwiY2lkIjoibWVuZ18xNDM5XzM0NV9hbmRyb2lkIiwibWQ1IjpmYWxzZX0/9a79b483552727b4f2bf0000c6084fc6" -O "${bundle_id}.apk" -q; then
+        #可能是一次性链接
+            if wget "https://s2.g.mi.com/7c6c36ff446ff728abe82363b6f2dfee/1757515776/package/AppStore/0778a75f7e0e64c5cb140f92866c2794ec0f2a02a/eyJhcGt2Ijo5NjExLCJuYW1lIjoiY29tLmJpbGliaWxpLmJsaHgubWkiLCJ2ZXJzaW9uIjoiMS4wIiwiY2lkIjoibWVuZ18xNDM5XzM0NV9hbmRyb2lkIiwibWQ1IjpmYWxzZX0/ce915ecd41db4e3016302cda639993a0" -O "${bundle_id}.apk" -q; then
                 download_success=true
             fi
             ;;
