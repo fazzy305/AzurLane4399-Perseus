@@ -131,13 +131,21 @@ if [ "$SRC_DIR" != "$NEW_SRC_PATH" ]; then
 else
 	echo "Don't need to rename"
 fi
+
+# 复制新的目录到目标位置
+cp -r "$NEW_SRC_PATH" "${bundle_id}/"
+if [ $? -ne 0 ]; then
+	echo "Error: Failed to copy smali${NEW_CLASS_NUM}！"
+	exit 1
+fi
 echo "Move JMBQ smali to ${bundle_id}/smali_classes${NEW_CLASS_NUM}/ Success!"
+
 #展示移动后结构
-echo "Moved directory structure:"
-echo "=================================="
-tree "${bundle_id}" -L 2 2>/dev/null || find "${bundle_id}" -maxdepth 2 -type d | sort
-echo "=================================="
-exit 1
+#echo "Moved directory structure:"
+#echo "=================================="
+#tree "${bundle_id}" -L 2 2>/dev/null || find "${bundle_id}" -maxdepth 2 -type d | sort
+#echo "=================================="
+#exit 1
 
 echo "Patching Azur Lane with JMBQ"
 # 尝试搜索整个目录
