@@ -42,7 +42,7 @@ if [ ! -f "${bundle_id}.apk" ]; then
 
     case "${bundle_id}" in
         "com.bilibili.AzurLane")
-            if wget "https://pan.gfwl.top/f/n8qeCn/blhx_bilibili.apk" -O "${bundle_id}.apk -q"; then
+            if wget "https://pan.gfwl.top/f/n8qeCn/blhx_bilibili.apk" -O "${bundle_id}.apk" -q; then
                 download_success=true
             fi
             ;;
@@ -53,7 +53,7 @@ if [ ! -f "${bundle_id}.apk" ]; then
             ;;
         "com.bilibili.blhx.mi")
         #可能是一次性链接
-            if wget "https://s2.g.mi.com/7c6c36ff446ff728abe82363b6f2dfee/1757515776/package/AppStore/0778a75f7e0e64c5cb140f92866c2794ec0f2a02a/eyJhcGt2Ijo5NjExLCJuYW1lIjoiY29tLmJpbGliaWxpLmJsaHgubWkiLCJ2ZXJzaW9uIjoiMS4wIiwiY2lkIjoibWVuZ18xNDM5XzM0NV9hbmRyb2lkIiwibWQ1IjpmYWxzZX0/ce915ecd41db4e3016302cda639993a0" -O "${bundle_id}.apk -q"; then
+            if wget "https://s2.g.mi.com/7c6c36ff446ff728abe82363b6f2dfee/1757515776/package/AppStore/0778a75f7e0e64c5cb140f92866c2794ec0f2a02a/eyJhcGt2Ijo5NjExLCJuYW1lIjoiY29tLmJpbGliaWxpLmJsaHgubWkiLCJ2ZXJzaW9uIjoiMS4wIiwiY2lkIjoibWVuZ18xNDM5XzM0NV9hbmRyb2lkIiwibWQ1IjpmYWxzZX0/ce915ecd41db4e3016302cda639993a0" -O "${bundle_id}.apk"-q; then
                 download_success=true
             fi
             ;;
