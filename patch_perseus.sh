@@ -96,11 +96,11 @@ fi
 #echo "=================================="
 
 echo "Copy JMBQ libs"
-cp -r azurlane_JMBQ_Menu_2.7/.  ${bundle_id}/lib/
+cp -r azurlane_JMBQ_Menu_2.7/lib/.  ${bundle_id}/lib/
 
 # 2. 复制 JMBQ smali 文件
 echo "Copy JMBQ smali ..."
-local SRC_DIR="JMBQ/smali_classes4"
+SRC_DIR="azurlane_JMBQ_Menu_2.7/smali_classes4"
 
 # 检查原始源目录是否存在
 #if [ ! -d "$SRC_DIR" ]; then
@@ -109,7 +109,7 @@ local SRC_DIR="JMBQ/smali_classes4"
 #fi
 
 # 查找目标目录中最大的 smali_classes 目录编号，smali_classes4需改为smali_classes（n+1）
-local MAX_CLASS_NUM=3
+MAX_CLASS_NUM=3
 if [ -d "${actual_bundle_id}/" ]; then
 	# 使用 find 查找所有 smali_classesX 目录，并提取最大的编号,如果没有找到，将编号重置为 3
 	MAX_CLASS_NUM=$(find "${actual_bundle_id}/" -maxdepth 1 -type d -name "smali_classes*" | sed 's/.*smali_classes//' | sort -n | tail -1)
@@ -117,8 +117,8 @@ if [ -d "${actual_bundle_id}/" ]; then
 fi
 
 # 计算新的 smali_classes 目录编号
-local NEW_CLASS_NUM=$((MAX_CLASS_NUM + 1))
-local NEW_SRC_PATH="JMBQ/smali_classes${NEW_CLASS_NUM}"
+NEW_CLASS_NUM=$((MAX_CLASS_NUM + 1))
+NEW_SRC_PATH="JMBQ/smali_classes${NEW_CLASS_NUM}"
 
 # 只有当新的目录路径与旧的目录路径不同时，才执行重命名
 if [ "$SRC_DIR" != "$NEW_SRC_PATH" ]; then
@@ -149,7 +149,7 @@ else
 fi
 
 # 提取 <init>
-init=$(grep -n "\.method public constructor <init>()V" "$smali_patE" | cut -d: -f1)
+init=$(grep -n "\.method public constructor <init>()V" "$smali_path" | cut -d: -f1)
 if [ -z "$init" ]; then
     echo "Error: Could not find onCreate method in $smali_path"
     exit 1
