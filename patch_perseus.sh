@@ -75,10 +75,10 @@ if [ ! -f "${bundle_id}.apk" ]; then
     #cp AzurLane/com.YoStarJP.AzurLane.apk .
 fi
 
-    # Download JMBQ
+    # Download Perseus
 if [ ! -d "azurlane" ]; then
-    echo "download JMBQ"
-    git clone https://github.com/fazzy305//azurlane
+    echo "download Perseus"
+    git clone https://github.com/Egoistically/Perseus
 fi
 
 echo "Decompile Azur Lane apk"
@@ -96,10 +96,10 @@ fi
 #tree "${bundle_id}" -L 2 2>/dev/null || find "${bundle_id}" -maxdepth 2 -type d | sort
 #echo "=================================="
 
-echo "Copy JMBQ libs"
-cp -r azurlane/.  ${bundle_id}/lib/
+echo "Copy Perseus libs"
+cp -r Perseus/.  ${bundle_id}/lib/
 
-echo "Patching Azur Lane with JMBQ"
+echo "Patching Azur Lane with Perseus"
 # 尝试搜索整个目录
 echo "Searching for UnityPlayerActivity.smali in all directories..."
 smali_path=$(find "${bundle_id}" -name "UnityPlayerActivity.smali" | head -n 1)
@@ -121,7 +121,9 @@ if [ -z "$oncreate" ]; then
     exit 1
 fi
 # 应用补丁
-sed -i "N; s#\($oncreate\n    .locals 2\)#\1\n    const-string v0, \"JMBQ\"\n\n    invoke-static {v0}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V\n#" "$smali_path"
+#sed -i "N; s#\($oncreate\n    .locals 2\)#\1\n    const-string v0, \"JMBQ\"\n\n    invoke-static {v0}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V\n#" "$smali_path"
+sed -i "s#\($oncreate\)#.method private static native init(Landroid/content/Context;)V\n.end method\n\n\1#" "$smali_path"
+sed -i "s#\($oncreate\)#\1\n    const-string v0, \"Perseus\"\n\n\    invoke-static {v0}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V\n\n    invoke-static {p0}, Lcom/unity3d/player/UnityPlayerActivity;->init(Landroid/content/Context;)V\n#" "$smali_path"
 
 echo "Build Patched Azur Lane apk"
 java -jar apktool.jar build --force "${bundle_id}" --output "build/${bundle_id}.patched.apk"
