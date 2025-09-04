@@ -1,4 +1,3 @@
-@@ -1,98 +1,98 @@
 #!/bin/bash
 
 # Check if bundle id is provided
@@ -76,9 +75,9 @@ if [ ! -f "${bundle_id}.apk" ]; then
 fi
 
     # Download JMBQ
-if [ ! -d "azurlane" ]; then
+if [ ! -d "azurlane_JMBQ_Menu_2.7" ]; then
     echo "download JMBQ"
-    git clone https://github.com/fazzy305//azurlane
+    git clone https://github.com/fazzy305/azurlane_JMBQ_Menu_2.7
 fi
 
 echo "Decompile Azur Lane apk"
@@ -97,7 +96,42 @@ fi
 #echo "=================================="
 
 echo "Copy JMBQ libs"
-cp -r azurlane/.  ${bundle_id}/lib/
+cp -r azurlane_JMBQ_Menu_2.7/.  ${bundle_id}/lib/
+
+# 2. 复制 JMBQ smali 文件
+echo "Copy JMBQ smali ..."
+local SRC_DIR="JMBQ/smali_classes4"
+
+# 检查原始源目录是否存在
+#if [ ! -d "$SRC_DIR" ]; then
+	#echo "Error:  $SRC_DIR not found！"
+	#exit 1
+#fi
+
+# 查找目标目录中最大的 smali_classes 目录编号，smali_classes4需改为smali_classes（n+1）
+local MAX_CLASS_NUM=3
+if [ -d "${actual_bundle_id}/" ]; then
+	# 使用 find 查找所有 smali_classesX 目录，并提取最大的编号,如果没有找到，将编号重置为 3
+	MAX_CLASS_NUM=$(find "${actual_bundle_id}/" -maxdepth 1 -type d -name "smali_classes*" | sed 's/.*smali_classes//' | sort -n | tail -1)
+	[ -z "$MAX_CLASS_NUM" ] && MAX_CLASS_NUM=3
+fi
+
+# 计算新的 smali_classes 目录编号
+local NEW_CLASS_NUM=$((MAX_CLASS_NUM + 1))
+local NEW_SRC_PATH="JMBQ/smali_classes${NEW_CLASS_NUM}"
+
+# 只有当新的目录路径与旧的目录路径不同时，才执行重命名
+if [ "$SRC_DIR" != "$NEW_SRC_PATH" ]; then
+	echo "正在将 $SRC_DIR 重命名为 $NEW_SRC_PATH"
+	mv "$SRC_DIR" "$NEW_SRC_PATH"
+	if [ $? -ne 0 ]; then
+		echo "Error: Failed to move smali file ！"
+		exit 1
+	fi
+else
+	echo "Don't need to rename"
+fi
+echo "Move JMBQ smali to ${actual_bundle_id}/smali_classes${NEW_CLASS_NUM}/ Success!"
 
 echo "Patching Azur Lane with JMBQ"
 # 尝试搜索整个目录
@@ -114,15 +148,28 @@ else
     echo "Found UnityPlayerActivity.smali at: $smali_path"
 fi
 
-# 提取 onCreate 方法
-oncreate=$(grep -n -m 1 'onCreate' "$smali_path" | sed 's/[0-9]*\:\(.*\)/\1/')
-if [ -z "$oncreate" ]; then
+# 提取 <init>
+init=$(grep -n "\.method public constructor <init>()V" "$SMALI_FILE" | cut -d: -f1)
+if [ -z "$init" ]; then
     echo "Error: Could not find onCreate method in $smali_path"
     exit 1
 fi
-# 应用补丁
-sed -i "N; s#\($oncreate\n    .locals 2\)#\1\n    const-string v0, \"JMBQ\"\n\n    invoke-static {v0}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V\n#" "$smali_path"
 
+# 修改smail
+sed -i -e "/\.method public constructor <init>()V/,/\.end method/{" \
+	-e "/\.locals 0/a\    invoke-static {}, Lcom/android/support/Main;->Start()V" \
+	-e "}" "$smali_path"
+ 
+#  修改 AndroidManifest.xml
+sed -i 's#</application>#    <service android:name="com.android.support.Launcher" android:enabled="true" android:exported="false" android:stopWithTask="true"/>\n    </application>\n    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>#' "${actual_bundle_id}/AndroidManifest.xml"
+if [ $? -ne 0 ]; then
+	    echo "Error：Failed to modify AndroidManifest.xml."
+	    exit 1
+	else
+	    echo "Modify AndroidManifest.xml Success."
+fi
+
+ 
 echo "Build Patched Azur Lane apk"
 java -jar apktool.jar build --force "${bundle_id}" --output "build/${bundle_id}.patched.apk"
 
