@@ -69,7 +69,7 @@ jobs:
       - name: Release
         uses: ncipollo/release-action@v1
         with:
-          tag: "${{ github.event.inputs.region }}"
-          name: "Perseus Release ${{ github.event.inputs.region }} Ver."
+          tag: "${{ github.event.inputs.region }} menu"
+          name: "Perseus Release ${{ github.event.inputs.region }} menu Ver."
           artifacts: "build/*.apk"
           allowUpdates: true
