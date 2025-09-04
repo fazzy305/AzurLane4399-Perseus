@@ -110,9 +110,9 @@ SRC_DIR="azurlane_JMBQ_Menu_2.7/smali_classes4"
 
 # 查找目标目录中最大的 smali_classes 目录编号，smali_classes4需改为smali_classes（n+1）
 MAX_CLASS_NUM=3
-if [ -d "${actual_bundle_id}/" ]; then
+if [ -d "${bundle_id}/" ]; then
 	# 使用 find 查找所有 smali_classesX 目录，并提取最大的编号,如果没有找到，将编号重置为 3
-	MAX_CLASS_NUM=$(find "${actual_bundle_id}/" -maxdepth 1 -type d -name "smali_classes*" | sed 's/.*smali_classes//' | sort -n | tail -1)
+	MAX_CLASS_NUM=$(find "${bundle_id}/" -maxdepth 1 -type d -name "smali_classes*" | sed 's/.*smali_classes//' | sort -n | tail -1)
 	[ -z "$MAX_CLASS_NUM" ] && MAX_CLASS_NUM=3
 fi
 
@@ -131,7 +131,7 @@ if [ "$SRC_DIR" != "$NEW_SRC_PATH" ]; then
 else
 	echo "Don't need to rename"
 fi
-echo "Move JMBQ smali to ${actual_bundle_id}/smali_classes${NEW_CLASS_NUM}/ Success!"
+echo "Move JMBQ smali to ${bundle_id}/smali_classes${NEW_CLASS_NUM}/ Success!"
 
 echo "Patching Azur Lane with JMBQ"
 # 尝试搜索整个目录
