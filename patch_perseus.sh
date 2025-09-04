@@ -149,7 +149,7 @@ else
 fi
 
 # 提取 <init>
-init=$(grep -n "\.method public constructor <init>()V" "$SMALI_FILE" | cut -d: -f1)
+init=$(grep -n "\.method public constructor <init>()V" "$smali_patE" | cut -d: -f1)
 if [ -z "$init" ]; then
     echo "Error: Could not find onCreate method in $smali_path"
     exit 1
