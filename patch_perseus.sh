@@ -132,6 +132,12 @@ else
 	echo "Don't need to rename"
 fi
 echo "Move JMBQ smali to ${bundle_id}/smali_classes${NEW_CLASS_NUM}/ Success!"
+#展示移动后结构
+echo "Moved directory structure:"
+echo "=================================="
+tree "${bundle_id}" -L 2 2>/dev/null || find "${bundle_id}" -maxdepth 2 -type d | sort
+echo "=================================="
+exit 1
 
 echo "Patching Azur Lane with JMBQ"
 # 尝试搜索整个目录
