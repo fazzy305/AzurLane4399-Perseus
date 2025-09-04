@@ -98,7 +98,7 @@ fi
 echo "Copy JMBQ libs"
 cp -r azurlane_JMBQ_Menu_2.7/lib/.  ${bundle_id}/lib/
 
-# 2. 复制 JMBQ smali 文件
+#  复制 JMBQ smali 文件
 echo "Copy JMBQ smali ..."
 SRC_DIR="azurlane_JMBQ_Menu_2.7/smali_classes4"
 
@@ -118,7 +118,7 @@ fi
 
 # 计算新的 smali_classes 目录编号
 NEW_CLASS_NUM=$((MAX_CLASS_NUM + 1))
-NEW_SRC_PATH="JMBQ/smali_classes${NEW_CLASS_NUM}"
+NEW_SRC_PATH="azurlane_JMBQ_Menu_2.7/smali_classes${NEW_CLASS_NUM}"
 
 # 只有当新的目录路径与旧的目录路径不同时，才执行重命名
 if [ "$SRC_DIR" != "$NEW_SRC_PATH" ]; then
