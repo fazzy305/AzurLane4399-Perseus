@@ -161,7 +161,7 @@ sed -i -e "/\.method public constructor <init>()V/,/\.end method/{" \
 	-e "}" "$smali_path"
  
 #  修改 AndroidManifest.xml
-sed -i 's#</application>#    <service android:name="com.android.support.Launcher" android:enabled="true" android:exported="false" android:stopWithTask="true"/>\n    </application>\n    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>#' "${actual_bundle_id}/AndroidManifest.xml"
+sed -i 's#</application>#    <service android:name="com.android.support.Launcher" android:enabled="true" android:exported="false" android:stopWithTask="true"/>\n    </application>\n    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>#' "${bundle_id}/AndroidManifest.xml"
 if [ $? -ne 0 ]; then
 	    echo "Error：Failed to modify AndroidManifest.xml."
 	    exit 1
