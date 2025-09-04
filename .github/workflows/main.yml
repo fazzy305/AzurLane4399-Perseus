@@ -1,4 +1,4 @@
-name: JMBQ_menu Build
+name: JMBQ Build
 
 on:
   workflow_dispatch:
