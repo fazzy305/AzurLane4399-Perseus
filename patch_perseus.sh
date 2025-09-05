@@ -81,8 +81,8 @@ if [ $? -ne 0 ] || [ -z "$Signature_string" ]; then
     echo "Error: Failed to extract signature from APK"
 fi
 
-echo "Extracted signature: $Signature_string"
-exit 1
+#echo "Extracted signature: $Signature_string"
+#exit 1
 
     # Download JMBQ
 if [ ! -d "azurlane_JMBQ_Menu_2.7" ]; then
