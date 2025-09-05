@@ -74,6 +74,17 @@ if [ ! -f "${bundle_id}.apk" ]; then
     #cp AzurLane/com.YoStarJP.AzurLane.apk .
 fi
 
+# 提取 APK 签名
+echo "Extracting signature from APK..."
+Signature_string=$(python3 extract_signature.py "${bundle_id}.apk")
+if [ $? -ne 0 ] || [ -z "$Signature_string" ]; then
+    echo "Error: Failed to extract signature from APK"
+    exit 1
+fi
+
+echo "Extracted signature: $Signature_string"
+exit 1
+
     # Download JMBQ
 if [ ! -d "azurlane_JMBQ_Menu_2.7" ]; then
     echo "download JMBQ"
