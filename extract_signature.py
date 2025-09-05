@@ -6,10 +6,11 @@ import tempfile
 import os
 import binascii
 import base64
+import json
 
-def extract_android_signature(apk_path):
+def extract_certificate_info(apk_path):
     """
-    从 APK 文件中提取签名信息，模拟 Android 的 Signature.toCharsString() 行为
+    从 APK 文件中提取证书信息，返回包含多种格式的字典
     """
     # 创建临时目录
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -36,20 +37,21 @@ def extract_android_signature(apk_path):
             with open(extracted_path, 'rb') as cert_file:
                 cert_data = cert_file.read()
             
-            # 模拟 Android 的 Signature.toCharsString() 行为
-            # 在 Android 中，Signature.toCharsString() 返回的是 Base64 编码的证书数据
-            # 但格式化为带有 BEGIN/END 标记的多行字符串
+            # 转换为十六进制字符串
+            hex_cert = binascii.hexlify(cert_data).decode('utf-8')
             
-            # 首先进行 Base64 编码
+            # 转换为 Base64 字符串（带格式）
             base64_cert = base64.b64encode(cert_data).decode('utf-8')
-            
-            # 格式化为多行（每行 64 字符）
             formatted_cert = "-----BEGIN CERTIFICATE-----\n"
             for i in range(0, len(base64_cert), 64):
                 formatted_cert += base64_cert[i:i+64] + "\n"
             formatted_cert += "-----END CERTIFICATE-----"
             
-            return formatted_cert
+            return {
+                'hex': hex_cert,
+                'base64': formatted_cert,
+                'signature_file': signature_file
+            }
 
 def main():
     if len(sys.argv) != 2:
@@ -61,11 +63,12 @@ def main():
         print(f"Error: APK file not found: {apk_path}")
         sys.exit(1)
         
-    signature_string = extract_android_signature(apk_path)
-    if signature_string:
-        print(signature_string)
+    certificate_info = extract_certificate_info(apk_path)
+    if certificate_info:
+        # 输出十六进制格式（与 Android Signature.toByteArray() 匹配）
+        print(certificate_info['hex'])
     else:
-        print("Error: Failed to extract signature")
+        print("Error: Failed to extract certificate data")
         sys.exit(1)
 
 if __name__ == "__main__":
