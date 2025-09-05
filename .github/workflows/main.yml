@@ -23,7 +23,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+        
       - name: Setup Java JDK
         uses: actions/setup-java@v3.3.0
         with:
@@ -41,6 +46,11 @@ jobs:
       - name: Install build-tools
         run: |
           yes | sdkmanager --install "build-tools;32.0.0"
+
+      - name: Install unzip
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget unzip jq aapt
 
       # APK build process
       - name: Determine Bundle ID
