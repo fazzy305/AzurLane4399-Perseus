@@ -79,7 +79,6 @@ echo "Extracting signature from APK..."
 Signature_string=$(python3 extract_signature.py "${bundle_id}.apk")
 if [ $? -ne 0 ] || [ -z "$Signature_string" ]; then
     echo "Error: Failed to extract signature from APK"
-    exit 1
 fi
 
 echo "Extracted signature: $Signature_string"
@@ -89,6 +88,29 @@ exit 1
 if [ ! -d "azurlane_JMBQ_Menu_2.7" ]; then
     echo "download JMBQ"
     git clone https://github.com/fazzy305/azurlane_JMBQ_Menu_2.7
+fi
+
+# 替换 PmsHook.smali 文件中的签名
+PMS_HOOK_FILE="azurlane_JMBQ_Menu_2.7/smali_classes4/com/android/support/PmsHook.smali"
+
+if [ -f "$PMS_HOOK_FILE" ]; then
+    echo "Replacing signature in PmsHook.smali..."
+    
+    # 备份原始文件
+    cp "$PMS_HOOK_FILE" "$PMS_HOOK_FILE.bak"
+    
+    # 替换签名
+    if sed -i "s/\"3082[^\"]*\"/\"$Signature_string\"/g" "$PMS_HOOK_FILE"; then
+        echo "Signature replaced successfully in PmsHook.smali"
+    else
+        echo "Error: Failed to replace signature in PmsHook.smali"
+        # 恢复备份
+        cp "$PMS_HOOK_FILE.bak" "$PMS_HOOK_FILE"
+        exit 1
+    fi
+else
+    echo "Error: PmsHook.smali not found at $PMS_HOOK_FILE"
+    exit 1
 fi
 
 echo "Decompile Azur Lane apk"
