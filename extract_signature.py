@@ -2,14 +2,14 @@
 
 import sys
 import zipfile
-import subprocess
 import tempfile
 import os
-import re
+import binascii
+import base64
 
-def extract_signature(apk_path):
+def extract_android_signature(apk_path):
     """
-    从 APK 文件中提取签名信息
+    从 APK 文件中提取签名信息，模拟 Android 的 Signature.toCharsString() 行为
     """
     # 创建临时目录
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -32,39 +32,24 @@ def extract_signature(apk_path):
             # 移动文件到正确位置
             os.rename(os.path.join(temp_dir, signature_file), extracted_path)
             
-            # 使用 keytool 提取签名信息
-            try:
-                result = subprocess.run([
-                    'keytool', '-printcert', '-file', extracted_path
-                ], capture_output=True, text=True, check=True)
-                
-                # 提取 SHA1 和 SHA256 指纹
-                output = result.stdout
-                sha1_match = re.search(r'SHA1:\s*([0-9A-F:]+)', output)
-                sha256_match = re.search(r'SHA256:\s*([0-9A-F:]+)', output)
-                
-                if sha1_match:
-                    sha1 = sha1_match.group(1).replace(':', '').lower()
-                else:
-                    sha1 = None
-                    
-                if sha256_match:
-                    sha256 = sha256_match.group(1).replace(':', '').lower()
-                else:
-                    sha256 = None
-                    
-                return {
-                    'sha1': sha1,
-                    'sha256': sha256,
-                    'raw_output': output
-                }
-                
-            except subprocess.CalledProcessError as e:
-                print(f"Error running keytool: {e}")
-                return None
-            except FileNotFoundError:
-                print("Error: keytool not found. Make sure Java JDK is installed.")
-                return None
+            # 读取证书文件的二进制内容
+            with open(extracted_path, 'rb') as cert_file:
+                cert_data = cert_file.read()
+            
+            # 模拟 Android 的 Signature.toCharsString() 行为
+            # 在 Android 中，Signature.toCharsString() 返回的是 Base64 编码的证书数据
+            # 但格式化为带有 BEGIN/END 标记的多行字符串
+            
+            # 首先进行 Base64 编码
+            base64_cert = base64.b64encode(cert_data).decode('utf-8')
+            
+            # 格式化为多行（每行 64 字符）
+            formatted_cert = "-----BEGIN CERTIFICATE-----\n"
+            for i in range(0, len(base64_cert), 64):
+                formatted_cert += base64_cert[i:i+64] + "\n"
+            formatted_cert += "-----END CERTIFICATE-----"
+            
+            return formatted_cert
 
 def main():
     if len(sys.argv) != 2:
@@ -76,14 +61,9 @@ def main():
         print(f"Error: APK file not found: {apk_path}")
         sys.exit(1)
         
-    signature_info = extract_signature(apk_path)
-    if signature_info:
-        # 输出 SHA1 签名 (与原始Java代码最接近的匹配)
-        if signature_info['sha1']:
-            print(signature_info['sha1'])
-        else:
-            print("Error: Could not extract signature")
-            sys.exit(1)
+    signature_string = extract_android_signature(apk_path)
+    if signature_string:
+        print(signature_string)
     else:
         print("Error: Failed to extract signature")
         sys.exit(1)
