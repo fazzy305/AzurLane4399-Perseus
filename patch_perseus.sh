@@ -85,9 +85,9 @@ fi
 #exit 1
 
     # Download JMBQ
-if [ ! -d "azurlane_JMBQ_Menu_2.7" ]; then
+if [ ! -d "azurlane_JMBQ_Menu_2.8" ]; then
     echo "download JMBQ"
-    git clone https://github.com/fazzy305/azurlane_JMBQ_Menu_2.7
+    git clone https://github.com/fazzy305/azurlane_JMBQ_Menu_2.8
 fi
 
 # 替换 PmsHook.smali 文件中的签名
