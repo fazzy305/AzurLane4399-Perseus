@@ -91,7 +91,7 @@ if [ ! -d "azurlane_JMBQ_Menu_2.8" ]; then
 fi
 
 # 替换 PmsHook.smali 文件中的签名
-PMS_HOOK_FILE="azurlane_JMBQ_Menu_2.7/smali_classes4/com/android/support/PmsHook.smali"
+PMS_HOOK_FILE="azurlane_JMBQ_Menu_2.8/smali_classes4/com/android/support/PmsHook.smali"
 
 if [ -f "$PMS_HOOK_FILE" ]; then
     echo "Replacing signature in PmsHook.smali..."
@@ -127,11 +127,11 @@ fi
 #echo "=================================="
 
 echo "Copy JMBQ libs"
-cp -r azurlane_JMBQ_Menu_2.7/lib/.  ${bundle_id}/lib/
+cp -r azurlane_JMBQ_Menu_2.8/lib/.  ${bundle_id}/lib/
 
 #  复制 JMBQ smali 文件
 echo "Copy JMBQ smali ..."
-SRC_DIR="azurlane_JMBQ_Menu_2.7/smali_classes4"
+SRC_DIR="azurlane_JMBQ_Menu_2.8/smali_classes4"
 
 # 检查原始源目录是否存在
 #if [ ! -d "$SRC_DIR" ]; then
@@ -149,7 +149,7 @@ fi
 
 # 计算新的 smali_classes 目录编号
 NEW_CLASS_NUM=$((MAX_CLASS_NUM + 1))
-NEW_SRC_PATH="azurlane_JMBQ_Menu_2.7/smali_classes${NEW_CLASS_NUM}"
+NEW_SRC_PATH="azurlane_JMBQ_Menu_2.8/smali_classes${NEW_CLASS_NUM}"
 
 # 只有当新的目录路径与旧的目录路径不同时，才执行重命名
 if [ "$SRC_DIR" != "$NEW_SRC_PATH" ]; then
